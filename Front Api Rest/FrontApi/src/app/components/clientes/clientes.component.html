@@ -1,0 +1,95 @@
+<div class="container-fluid mt-4" style="width: 95%;">
+    <h2>Clientes</h2>
+    <div class="d-flex justify-content-between mb-3">
+        <button (click)="toggleForm()" class="btn btn-success">
+            <i class="fa-solid fa-plus"></i>
+            Registrar Cliente
+        </button>
+    </div>
+    <table class="table table-striped table-bordered mt-3">
+        <thead class="table-dark">
+            <tr style="text-align: center;">
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">E Mail</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr *ngFor="let cliente of clientes; let i = index" style="text-align: center;">
+                <td>{{i + 1}}</td>
+                <td hidden>{{cliente.id}}</td>
+                <td>{{cliente.nombre}}</td>
+                <td>{{cliente.apellido}}</td>
+                <td>{{cliente.email}}</td>
+                <td>{{cliente.telefono}}</td>
+                <td>{{cliente.direccion}}</td>
+                <td>
+
+                    <button class="btn btn-primary btn-sm me-1" (click) ="editCliente(cliente)">
+                    <i class="fa-fa-edit"></i>Editar
+                    </button>
+                    
+                    <button class="btn btn-danger btn-sm me-1" (click) ="cliente.id ? deleteCliente(cliente.id) : null">
+                        <i class="fa-fa-trash"></i>Eliminar
+                    </button>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="showForm" style="margin-top: 20px;">
+        <h3>{{textoModal}}</h3>
+            <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group mb-3">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" class="form-control" formControlName="nombre">
+            <div *ngIf="clienteForm.get('nombre')?.touched && clienteForm.get('nombre')?.invalid" class="text-danger">
+                El nombre es obligatorio y debe tener al menos 2 caracteres.
+            </div>
+            </div>
+
+            <div class="form-group mb-3">
+            <label for="apellido">Apellido</label>
+            <input id="apellido" class="form-control" formControlName="apellido">
+            <div *ngIf="clienteForm.get('apellido')?.touched && clienteForm.get('apellido')?.invalid" class="text-danger">
+                El apellido es obligatorio.
+            </div>
+            </div>
+
+            <div class="form-group mb-3">
+            <label for="email">E-Mail</label>
+            <input id="email" class="form-control" formControlName="email">
+            <div *ngIf="clienteForm.get('email')?.touched && clienteForm.get('email')?.invalid" class="text-danger">
+            El correo debe ser válido 
+            </div>
+
+            </div>
+
+            <div class="form-group mb-3">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" class="form-control" formControlName="telefono">
+            <div *ngIf="clienteForm.get('telefono')?.touched && clienteForm.get('telefono')?.invalid" class="text-danger">
+                El teléfono debe tener 10 dígitos numéricos.
+            </div>
+            </div>
+
+            <div class="form-group mb-3">
+            <label for="direccion">Dirección</label>
+            <input id="direccion" class="form-control" formControlName="direccion">
+            <div *ngIf="clienteForm.get('direccion')?.touched && clienteForm.get('direccion')?.invalid" class="text-danger">
+                La dirección es obligatoria.
+            </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="clienteForm.invalid">Guardar</button>
+            </form>
+
+    </div>
