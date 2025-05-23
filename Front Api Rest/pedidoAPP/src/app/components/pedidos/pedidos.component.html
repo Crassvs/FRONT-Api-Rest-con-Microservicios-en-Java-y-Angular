@@ -1,0 +1,116 @@
+<div class="container-fluid mt-4" style="width: 95%;">
+  <h2>Pedidos</h2>
+  <div class="d-flex justify-content-between mb-3">
+    <button (click)="toggleForm()" class="btn btn-success">
+      <i class="fa-solid fa-plus"></i>
+      Registrar Pedido
+    </button>
+  </div>
+
+  <table class="table table-striped table-bordered mt-3">
+    <thead class="table-dark">
+      <tr style="text-align: center;">
+        <th scope="col">#</th>
+        <th scope="col">Cliente</th>
+        <th scope="col">Productos</th>
+        <th scope="col">Total</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pedido of pedidos; let i = index" style="text-align: center;">
+        <td>{{ i + 1 }}</td>
+        <td hidden>{{ pedido.id }}</td>
+        <td>{{ pedido.cliente }}</td>
+        <td>
+          <ul style="text-align: left;">
+            <li *ngFor="let prod of pedido.productos">{{ prod }}</li>
+          </ul>
+        </td>
+        <td>{{ pedido.total | currency }}</td>
+        <td>{{ pedido.fecha | date: 'short' }}</td>
+        <td>
+  <span [ngClass]="getEstadoClase(pedido.estado)">
+    {{ getEstadoNombre(pedido.estado) }}
+  </span>
+</td>
+
+        <td>
+          <button class="btn btn-primary btn-sm me-1" (click)="editPedido(pedido)">
+            <i class="fa fa-edit"></i> Editar
+          </button>
+
+          <button class="btn btn-danger btn-sm me-1" (click)="pedido.id ? deletePedido(pedido.id) : null">
+            <i class="fa fa-trash"></i> Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="showForm" style="margin-top: 20px;">
+    <h3>{{ textoModal }}</h3>
+    <form [formGroup]="pedidoForm" (ngSubmit)="onSubmit()">
+
+      <!-- CLIENTE -->
+      <div class="form-group mb-3">
+        <label for="clientes">Cliente</label>
+        <select id="clientes" class="form-control" formControlName="idCliente">
+          <option value="">Seleccione un cliente</option>
+          <option *ngFor="let cliente of clientes" [value]="cliente.id">
+            {{ cliente.nombre }} {{ cliente.apellido }}
+          </option>
+        </select>
+        <div *ngIf="pedidoForm.get('idCliente')?.touched && pedidoForm.get('idCliente')?.invalid" class="text-danger">
+          El cliente es obligatorio.
+        </div>
+      </div>
+
+      <!-- PRODUCTOS -->
+<div class="form-group mb-3">
+  <label for="productos">Productos</label>
+  <select id="productos" class="form-control" (change)="agregarProducto($event)">
+    <option value="">Seleccione un producto</option>
+    <option *ngFor="let producto of productosDisponibles" [value]="producto.id">
+      {{ producto.nombre }}
+    </option>
+  </select>
+
+  <!-- Lista de productos seleccionados -->
+  <div class="mt-2">
+    <span *ngFor="let prod of productosSeleccionados; let i = index" class="badge bg-primary me-1">
+      {{ prod.nombre }}
+      <button type="button" class="btn-close btn-close-white btn-sm ms-2" (click)="quitarProducto(i)"></button>
+    </span>
+  </div>
+</div>
+
+
+      <!-- FECHA -->
+      <div class="form-group mb-3">
+        <label for="fecha">Fecha</label>
+        <input id="fecha" type="date" class="form-control" formControlName="fecha" />
+        <div *ngIf="pedidoForm.get('fecha')?.touched && pedidoForm.get('fecha')?.invalid" class="text-danger">
+          La fecha es obligatoria.
+        </div>
+      </div>
+
+      <!-- ESTADO -->
+      <div class="form-group mb-3">
+        <label for="estado">Estado</label>
+        <select id="estado" class="form-control" formControlName="estado">
+          <option [value]="1">Pendiente</option>
+          <option [value]="2">Enviado</option>
+          <option [value]="3">Entregado</option>
+        </select>
+        <div *ngIf="pedidoForm.get('estado')?.touched && pedidoForm.get('estado')?.invalid" class="text-danger">
+          Seleccione un estado válido.
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="pedidoForm.invalid">Guardar</button>
+    </form>
+  </div>
+</div>
